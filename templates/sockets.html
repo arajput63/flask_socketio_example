@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="mx-auto" style="width: 500px;">
+  <h1>WebSocketIO Test page...</h1>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <h2>Streamed text...</h2>
+      <p id="stream-text">test...</p>
+    </div>
+    <div class="col-sm">
+      <h2>Streamed image...</h2>
+      <img id="stream-img" src="{{ url_for('static', filename='images/Random_Image.png') }}">
+
+    </div>
+  </div>
+</div>
+
+<!-- script for websocket client rendered to browser -->
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    const image_elem = document.getElementById("stream-img");
+    const text_elem = document.getElementById("stream-text");
+
+    var socket = io.connect('http://' + document.domain + ':' + location.port + '/web', {
+      reconnection: false
+    });
+    console.log('io connected to http://' + document.domain + ':' + location.port + '/web')
+
+    socket.on('connect', () => {
+      console.log('Connected');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected');
+    });
+
+    socket.on('connect_error', (error) => {
+      console.log('Connect error! ' + error);
+    });
+
+    socket.on('connect_timeout', (error) => {
+      console.log('Connect timeout! ' + error);
+    });
+
+    socket.on('error', (error) => {
+      console.log('Error! ' + error);
+    });
+
+  });
+</script>
+{% endblock %}
