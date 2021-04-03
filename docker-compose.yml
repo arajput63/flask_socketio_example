@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   flaskapp:
-    image: "ghcr.io/danieljfarrell/flask_socketio_example:${TAG-latest}"
+    image: "ghcr.io/arajput63/flask_socketio_example:${TAG-latest}"
     env_file:
       - .env
     ports:
