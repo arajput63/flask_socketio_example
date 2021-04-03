@@ -63,7 +63,7 @@ def ping_picam(message):
         {
             'server_ip': get_ip_addr()
         },
-        namespace='/server'
+        namespace='/client'
     )
     print('PING response sent back to client...')
 
