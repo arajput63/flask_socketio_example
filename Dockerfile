@@ -1,49 +1,17 @@
-# We will use Ubuntu for our image
-FROM ubuntu
+FROM ubuntu:20.04
 
-# Updating Ubuntu packages
-RUN apt-get update && yes|apt-get upgrade
+RUN apt-get update -y && \
+    apt-get install -y python-pip python-dev
 
-# Adding wget and bzip2
-RUN apt-get install -y wget bzip2
+# We copy just the requirements.txt first to leverage Docker cache
+COPY ./requirements.txt /app/requirements.txt
 
-# Anaconda installing
-RUN wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh
-RUN bash Anaconda3-5.0.1-Linux-x86_64.sh -b
-RUN rm Anaconda3-5.0.1-Linux-x86_64.sh
+WORKDIR /app
 
-# Set path to conda
-ENV PATH /root/anaconda3/bin:$PATH
+RUN pip install -r requirements.txt
 
-# Updating Anaconda packages
-RUN conda update conda
-RUN conda update anaconda
-RUN conda update --all
+COPY . /app
 
-#WORKDIR /app
+ENTRYPOINT [ "python" ]
 
-# Create the environment:
-COPY environment.yml .
-RUN conda env create -f environment.yml
-
-# Make RUN commands use the new environment:
-SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
-
-# Make sure the environment is activated:
-RUN echo "Make sure flask is installed:"
-RUN python -c "import flask"
-
-# The code to run when container is started:
-COPY app.py .
-ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "myenv", "python", "app.py"]
-
-
-# Configuring access to Jupyter
-#RUN mkdir /opt/notebooks
-#RUN jupyter notebook --generate-config --allow-root
-#RUN echo "c.NotebookApp.password = u'sha1:6a3f528eec40:6e896b6e4828f525a6e20e5411cd1c8075d68619'" >> /root/.jupyter/jupyter_notebook_config.py
-
-# Jupyter listens port: 8888
-#EXPOSE 8888
-# Run Jupytewr notebook as Docker main process
-#CMD ["jupyter", "notebook", "--allow-root", "--notebook-dir=/opt/notebooks", "--ip='*'", "--port=8888", "--no-browser"]
+CMD [ "app.py" ]
