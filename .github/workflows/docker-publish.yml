@@ -1,0 +1,33 @@
+name: Docker
+
+on:
+  push:
+    # Publish `v1.2.3` tags as releases.
+    tags:
+      - v*
+
+  # Run tests for any PRs.
+  pull_request:
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run tests
+        shell: bash -l {0}
+        run: |
+          sh ./scripts/test.sh
+
+      - name: Build images
+        shell: bash -l {0}
+        run: |
+          TAG=latest sh ./scripts/build.sh
+
+      - name: Push images
+        shell: bash -l {0}
+        run: |
+          echo ${{ secrets.GH_CI_PAT }} | docker login ghcr.io --username ${{ github.repository_owner }} --password-stdin
+          TAG=latest docker-compose -f docker-compose.yml push

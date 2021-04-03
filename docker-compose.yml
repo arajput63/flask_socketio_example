@@ -1,0 +1,12 @@
+version: "3.3"
+
+services:
+  flaskapp:
+    image: "ghcr.io/danieljfarrell/flask_socketio_example:${TAG-latest}"
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    build:
+      context: ./
+      dockerfile: Dockerfile
