@@ -7,7 +7,8 @@ from subprocess import check_output
 #server_address = "192.168.0.10"
 #server_address = "192.168.1.94"
 server_address = "178.79.155.175"
-server_port = 5000
+#server_port = 5000
+server_port = 80
 
 sio = socketio.Client()
 
@@ -44,7 +45,7 @@ def ping_server():
         namespace='/client')
     server_connected = False
 
-@sio.on('PING_FROM_SERVER', namespace='/server')
+@sio.on('PING_FROM_SERVER', namespace='/client')
 def ping_response(message):
     global server_connected
     print('Ping response received: ' + message['server_ip'])
